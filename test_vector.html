@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>Vector Utilities Test Page</title>
+<script src="namespace.js"></script>
+<script src="base.js"></script>
+<script src="vector.js"></script>
+<script src="timer.js"></script>
+<script src="unit.js"></script>
+</head>
+<body>
+<h1><script>document.write(document.title);</script></h1>
+<script>
+var Unit = global_namespace.Import('startpad.unit');
+var ts = new Unit.TestSuite();
+ts.DWOutputDiv();
+</script>
+<script>
+var Vector = global_namespace.Import('startpad.vector');
+
+
+ts.AddTest("Copy", function(ut)
+{
+	a = [1,2,3]
+	b = Vector.Copy(a);
+	ut.Assert(Vector.Equal(a,b));
+	ut.Assert(a !== b);
+	
+	c = Vector.Append(a,b,[7,8,9]);
+	ut.Assert(Vector.Equal(c, [1,2,3,1,2,3,7,8,9]));
+});
+
+ts.Run();
+ts.Report();
+
+</script>
+</body>
+</html>

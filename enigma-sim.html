@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Enigma Machine Simulator</title>
+<script src="namespace.js"></script>
+<script src="base.js"></script>
+<script src="formatutil.js"></script>
+<script src="dom.js"></script>
+<script src="events.js"></script>
+<script src="enigma.js"></script>
+<script src="enigma-sim.js"></script>
+<script src="mersene_twister.js"></script>
+<script src="random.js"></script>
+<link rel="stylesheet" type="text/css" href="enigma-sim.css"/>
+<script>
+var Sim = global_namespace.Import('startpad.enigma.sim');
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2709921-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+  })();
+</script>
+</head>
+<body>
+<div class="page">
+
+<h1>Enigma Machine Simulator</h1>
+<p style="color:gray;">by Mike Koss</p>
+<hr/>
+
+<div class="left">
+	<fieldset id="init_form">
+		<legend>Initialization</legend>
+		<ol>
+			<li>
+				<label for="rotors">Rotors:</label>
+				<input type="text" id="rotors"/>
+			</li>
+			<li>
+				<label for="position">Rotor Start:</label>
+				<input type="text" id="position"/>
+			</li>
+			<li>
+				<label for="rings">Rings:</label>
+				<input type="text" id="rings"/>
+			</li>
+			<li>
+				<label for="plugs">Plugboard:</label>
+				<input type="text" id="plugs"/>
+			</li>
+			<li>
+				<label for="passkey"></label>
+				<input type="button" id="passkey" value="Set from passkey"/>
+			</li>
+		</ol>
+	</fieldset>
+	<p>
+	To learn more about the <a target="_blank" href="http://en.wikipedia.org/wiki/Enigma_machine">Enigma Machine</a>,
+	try using the <a target="_blank" href="http://mckoss.com/Crypto/Enigma.htm">Paper Engima</a>.  You
+	can also read the <a target="_blank" href="http://code.google.com/p/startpad/source/browse/labs/js/enigma/enigma.js">source code</a>
+	used by this Enigma Simulator.
+	</p>
+	<a target="_blank" href="http://en.wikipedia.org/wiki/Enigma_machine"><img src="images/mycryptos.jpg"/></a>
+	<a target="_blank" href="http://mckoss.com/Crypto/Enigma.htm"><img src="images/EnigmaThumb.jpg"/></a>
+</div>
+
+<div class="right">
+	<fieldset id="encoding">
+		<legend>Encoding</legend>
+		<ol>
+			<li id="rotor_display">
+				<span id="rot_1"></span><span id="rot_2"></span><span id="rot_3"></span>
+			</li>
+			<li>
+				<label class="box" for="plain">Type Message Here:</label>
+				<textarea class="text-input" id="plain">QMJIDO MZWZJFJR</textarea>
+			</li>
+			<li>
+				<label class="box" for="cipher">Read Output Here:</label>
+				<div id="cipher"><span id="key_out"></span><span id="cipher_out"></span></div>
+			</li>
+			<li>
+				<input id="keep_spacing" type="checkbox" checked="true"/>
+				<label>Preserve spacing</label>
+
+			</li>
+			<li>
+				<label>Send to Twitter:</label>
+				<a id="twitter" target="_blank"
+				   href="http://twitter.com/home?source=Enigma&status=Enigma Machine http://bit.ly/enigma-machine"
+				   title="Share Link on Twitter">
+					<img src="images/twitter-logo.png">
+				</a>
+			</li>
+		</ol>
+	</fieldset>
+</div>
+
+<div style="clear:both;padding-top: 15px;" id="disqus_thread"></div>
+<script type="text/javascript" src="http://disqus.com/forums/startpadlabs/embed.js"></script>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div> <!-- page -->
+
+<script>Sim.Init();</script>
+<script type="text/javascript">
+//<![CDATA[
+(function() {
+	var links = document.getElementsByTagName('a');
+	var query = '?';
+	for(var i = 0; i < links.length; i++) {
+	if(links[i].href.indexOf('#disqus_thread') >= 0) {
+		query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
+	}
+	}
+	document.write('<script charset="utf-8" type="text/javascript" src="http://disqus.com/forums/startpadlabs/get_num_replies.js' + query + '"></' + 'script>');
+})();
+//]]>
+</script>
+</body>
+</html>

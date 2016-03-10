@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Enigma Machine Simulator</title>
+<script src="namespace.js"></script>
+<script src="base.js"></script>
+<script src="formatutil.js"></script>
+<script src="dom.js"></script>
+<script src="events.js"></script>
+<script src="enigma.js"></script>
+<script src="enigma-solver.js"></script>
+<link rel="stylesheet" type="text/css" href="enigma-sim.css"/>
+<script>
+var Solver = global_namespace.Import('startpad.enigma.solver');
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2709921-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+  })();
+</script>
+</head>
+<body>
+<div class="page">
+
+<h1>Enigma Machine Solver</h1>
+<p style="color:gray;">by Mike Koss</p>
+<hr/>
+
+<fieldset id="input_form">
+	<legend>Rotor Search</legend>
+	<ol>
+		<li>
+			<label class="box" for="cipher">Enter Coded Message Here:</label>
+			<textarea class="text-input" id="text_input">QMJIDO MZWZJFJR</textarea>
+		</li>
+		<li>
+			<label for="solve"></label>
+			<input type="button" id="solve" value="Solve It"/>
+		</li>
+	</ol>
+</fieldset>
+
+</div>
+<script>Solver.Init();</script>
+</body>
+</html>
