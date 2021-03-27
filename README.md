@@ -1,2 +1,3 @@
-# enigma
-Mirror of https://startpad.googlecode.com/hg/labs/js/enigma/enigma-sim.html by Mike Ross
+# Enigma Simulator in JavaScript
+
+Snapshot of https://startpad.googlecode.com/hg/labs/js/enigma repository.
