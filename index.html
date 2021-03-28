@@ -17,7 +17,7 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 </script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-2709921-5']);
+  _gaq.push(['_setAccount', 'UA-177353-1']);
   _gaq.push(['_trackPageview']);
 
   (function() {
@@ -62,12 +62,12 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 	</fieldset>
 	<p>
 	To learn more about the <a target="_blank" href="http://en.wikipedia.org/wiki/Enigma_machine">Enigma Machine</a>,
-	try using the <a target="_blank" href="http://mckoss.com/Crypto/Enigma.htm">Paper Engima</a>.  You
-	can also read the <a target="_blank" href="http://code.google.com/p/startpad/source/browse/labs/js/enigma/enigma.js">source code</a>
+	try using the <a target="_blank" href="https://mckoss.com/posts/paper-enigma/">Paper Engima</a>.  You
+	can also read the <a target="_blank" href="https://github.com/mckoss/enigma-simulator-js">source code</a>
 	used by this Enigma Simulator.
 	</p>
 	<a target="_blank" href="http://en.wikipedia.org/wiki/Enigma_machine"><img src="images/mycryptos.jpg"/></a>
-	<a target="_blank" href="http://mckoss.com/Crypto/Enigma.htm"><img src="images/EnigmaThumb.jpg"/></a>
+	<a target="_blank" href="https://mckoss.com/posts/paper-enigma/"><img src="images/EnigmaThumb.jpg"/></a>
 </div>
 
 <div class="right">
@@ -93,7 +93,7 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 			<li>
 				<label>Send to Twitter:</label>
 				<a id="twitter" target="_blank"
-				   href="http://twitter.com/home?source=Enigma&status=Enigma Machine http://bit.ly/enigma-machine"
+				   href="http://twitter.com/intent/tweet?text=Enigma Machine http://bit.ly/enigma-machine"
 				   title="Share Link on Twitter">
 					<img src="images/twitter-logo.png">
 				</a>
@@ -102,26 +102,23 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 	</fieldset>
 </div>
 
-<div style="clear:both;padding-top: 15px;" id="disqus_thread"></div>
-<script type="text/javascript" src="http://disqus.com/forums/startpadlabs/embed.js"></script>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+<script>Sim.Init();</script>
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    this.page.url = 'http://mckoss.com/enigma-simulator-js/';
+    this.page.identifier = 'enigma-simulator';
+    };
+
+    (function() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://mckoss.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
 
 </div> <!-- page -->
-
-<script>Sim.Init();</script>
-<script type="text/javascript">
-//<![CDATA[
-(function() {
-	var links = document.getElementsByTagName('a');
-	var query = '?';
-	for(var i = 0; i < links.length; i++) {
-	if(links[i].href.indexOf('#disqus_thread') >= 0) {
-		query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
-	}
-	}
-	document.write('<script charset="utf-8" type="text/javascript" src="http://disqus.com/forums/startpadlabs/get_num_replies.js' + query + '"></' + 'script>');
-})();
-//]]>
-</script>
 </body>
 </html>

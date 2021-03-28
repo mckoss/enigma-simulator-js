@@ -14,7 +14,7 @@ global_namespace.Define('startpad.enigma.sim', function (NS) {
 	
 NS.Extend(NS, {
 	aInitFields: ['rotors', 'position', 'rings', 'plugs', 'keep_spacing'],
-	sTwitter: "http://twitter.com/home?source=Enigma&status={key}{code} - http://bit.ly/enigma-machine",
+	sTwitter: "http://twitter.com/intent/tweet?text=Decode me: {key}{code} @ &url=http://mckoss.com/enigma-simulator-js/",
 	reMessageKey: /^([A-Z]{3})(\1)/i,
 
 Init: function()
