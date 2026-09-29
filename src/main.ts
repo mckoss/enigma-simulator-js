@@ -18,7 +18,6 @@ const fields = {
   plain: element<HTMLTextAreaElement>('plain'),
   key: element<HTMLElement>('key_out'),
   cipher: element<HTMLElement>('cipher_out'),
-  twitter: element<HTMLAnchorElement>('twitter'),
   passkey: element<HTMLInputElement>('passkey'),
   error: element<HTMLElement>('settings-error'),
   rotorsDisplay: [1, 2, 3].map((index) => element<HTMLElement>(`rot_${index}`)),
@@ -60,9 +59,6 @@ function updateDisplay(): void {
   if (!fields.keepSpacing.checked) cipher = groupLetters(cipher);
   fields.key.textContent = keyOutput;
   fields.cipher.textContent = cipher;
-  const share = new URL('https://twitter.com/intent/tweet');
-  share.searchParams.set('text', `Decode me: ${keyOutput}${cipher} @ https://mckoss.com/enigma-simulator-js/`);
-  fields.twitter.href = share.toString();
   fields.rotorsDisplay.forEach((display, index) => {
     display.textContent = charFromIndex(machine.position[index]);
   });
