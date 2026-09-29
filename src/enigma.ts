@@ -213,22 +213,22 @@ export class Enigma {
     if (upper < 'A' || upper > 'Z') return upper;
     this.incrementRotors();
     let index = this.plugs[indexFromChar(upper)];
-    const trace = [indexFromChar(upper), index];
+    const trace = this.trace ? [indexFromChar(upper), index] : undefined;
     for (let r = 2; r >= 0; r--) {
       const offset = (26 + index + this.position[r] - this.rings[r]) % 26;
       index = (index + this.rotors[r].map[offset]) % 26;
-      trace.push(index);
+      trace?.push(index);
     }
     index = (index + this.reflector.map[index]) % 26;
-    trace.push(index);
+    trace?.push(index);
     for (let r = 0; r < 3; r++) {
       const offset = (26 + index + this.position[r] - this.rings[r]) % 26;
       index = (index + this.rotors[r].reverse[offset]) % 26;
-      trace.push(index);
+      trace?.push(index);
     }
     index = this.plugs[index];
-    trace.push(index);
-    this.trace?.(`${trace.map(charFromIndex).join('->')} ${this.toString()}`);
+    trace?.push(index);
+    if (trace) this.trace?.(`${trace.map(charFromIndex).join('->')} ${this.toString()}`);
     return charFromIndex(index);
   }
 

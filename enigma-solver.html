@@ -39,7 +39,7 @@
         <div class="page-header-main">
           <p class="eyebrow">Unfinished experiment</p>
           <h1>Enigma Rotor Search</h1>
-          <p class="lead">Enter a coded message and search for possible rotor positions.</p>
+          <p class="lead">Search rotor orders and starting positions for a coded message.</p>
         </div>
         <div class="page-meta">
           <span class="meta-label">Created by</span>
@@ -54,18 +54,56 @@
             <span class="step-label">01 / Search</span>
             <h2 id="search-heading">Coded message</h2>
           </div>
-          <p class="experiment-note">This unfinished search keeps the rotor order (I–II–III), reflector (B), rings (AAA), and plugboard (empty) fixed. It tries 16,900 starting positions and favors decoded text with lower single-letter entropy. A few dozen letters can give a false winner; try a paragraph of at least 100 letters for a more useful guess. Even then, treat the result as a clue, not a reliable decode.</p>
+          <p class="experiment-note">This unfinished search tries all 17,576 starting positions for the selected rotor order, or 60 rotor arrangements when you choose to search all orders. Set the known reflector, rings, and plugboard values below. It favors decoded text with lower single-letter entropy. A few dozen letters can give a false winner; try a paragraph of at least 100 letters for a more useful guess. Even then, treat the result as a clue, not a reliable decode.</p>
           <fieldset id="input_form" class="solver-form">
             <legend class="visually-hidden">Rotor search</legend>
             <div class="field">
               <label for="text_input">Enter coded message here</label>
               <textarea class="text-input" id="text_input" spellcheck="false">QMJIDO MZWZJFJR</textarea>
             </div>
-            <input class="button button-primary" type="button" id="solve" value="Search rotor positions" />
+            <div class="field-grid solver-settings">
+              <div class="field">
+                <label for="search-rotors">Rotor order</label>
+                <input type="text" id="search-rotors" value="I-II-III" autocomplete="off" spellcheck="false" aria-describedby="search-rotors-help" />
+                <span class="field-help" id="search-rotors-help">Three different rotors from I–V, left to right</span>
+              </div>
+              <div class="field">
+                <label for="search-reflector">Reflector</label>
+                <select id="search-reflector"><option value="B">B</option><option value="C">C</option></select>
+              </div>
+              <div class="field">
+                <label for="search-rings">Ring settings</label>
+                <input type="text" id="search-rings" value="AAA" autocomplete="off" spellcheck="false" aria-describedby="search-rings-help" />
+                <span class="field-help" id="search-rings-help">Three letters, left to right</span>
+              </div>
+              <div class="field">
+                <label for="search-plugs">Plugboard</label>
+                <input type="text" id="search-plugs" autocomplete="off" spellcheck="false" aria-describedby="search-plugs-help" />
+                <span class="field-help" id="search-plugs-help">Known pairs, such as AB CD; leave empty if unused</span>
+              </div>
+            </div>
+            <label class="search-all-orders" for="search-all-orders">
+              <input id="search-all-orders" type="checkbox" />
+              Search all 60 rotor arrangements (takes longer)
+            </label>
+            <p id="search-error" role="alert"></p>
+            <input class="button button-primary" type="button" id="solve" value="Search rotor settings" />
           </fieldset>
           <div class="solver-result">
             <span class="status-label">Search result</span>
             <p id="solver-output" role="status" aria-live="polite">Run the search to see possible settings.</p>
+            <div id="entropy-summary" class="entropy-summary" hidden>
+              <div class="entropy-metrics">
+                <div class="entropy-metric"><span>Ciphertext</span><strong id="cipher-entropy"></strong><small>bits / letter</small></div>
+                <div class="entropy-metric"><span>Best guess</span><strong id="best-entropy"></strong><small>bits / letter</small></div>
+                <div class="entropy-metric"><span>Random expected</span><strong id="random-entropy"></strong><small>same length · bits / letter</small></div>
+              </div>
+              <p id="entropy-comparison" class="entropy-comparison"></p>
+            </div>
+            <div id="candidates" class="candidates" hidden>
+              <h3>Top 10 rotor settings</h3>
+              <ol id="candidate-list" class="candidate-list"></ol>
+            </div>
           </div>
         </section>
         <aside class="solver-aside">
