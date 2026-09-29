@@ -1,37 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html> 
+<!doctype html>
+<html lang="en">
 <head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Enigma Machine Simulator</title>
-<script src="namespace.js"></script>
-<script src="base.js"></script>
-<script src="formatutil.js"></script>
-<script src="dom.js"></script>
-<script src="events.js"></script>
-<script src="enigma.js"></script>
-<script src="enigma-sim.js"></script>
-<script src="mersene_twister.js"></script>
-<script src="random.js"></script>
-<link rel="stylesheet" type="text/css" href="enigma-sim.css"/>
-<script>
-var Sim = global_namespace.Import('startpad.enigma.sim');
-</script>
-<script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-177353-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
-  })();
-</script>
+<link rel="stylesheet" type="text/css" href="/enigma-sim.css"/>
 </head>
 <body>
 <div class="page">
 
 <h1>Enigma Machine Simulator</h1>
-<p style="color:gray;">by Mike Koss</p>
+<p style="color:gray;">by Mike Koss <small id="app-version"></small></p>
 <hr/>
 
 <div class="left">
@@ -61,12 +40,12 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 		</ol>
 	</fieldset>
 	<p>
-	To learn more about the <a target="_blank" href="http://en.wikipedia.org/wiki/Enigma_machine">Enigma Machine</a>,
+	To learn more about the <a target="_blank" href="https://en.wikipedia.org/wiki/Enigma_machine">Enigma Machine</a>,
 	try using the <a target="_blank" href="https://mckoss.com/posts/paper-enigma/">Paper Engima</a>.  You
 	can also read the <a target="_blank" href="https://github.com/mckoss/enigma-simulator-js">source code</a>
 	used by this Enigma Simulator.
 	</p>
-	<a target="_blank" href="http://en.wikipedia.org/wiki/Enigma_machine"><img src="images/mycryptos.jpg"/></a>
+	<a target="_blank" href="https://en.wikipedia.org/wiki/Enigma_machine"><img src="images/mycryptos.jpg"/></a>
 	<a target="_blank" href="https://mckoss.com/posts/paper-enigma/"><img src="images/EnigmaThumb.jpg"/></a>
 </div>
 
@@ -86,8 +65,8 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 				<div id="cipher"><span id="key_out"></span><span id="cipher_out"></span></div>
 			</li>
 			<li>
-				<input id="keep_spacing" type="checkbox" checked="true"/>
-				<label>Preserve spacing</label>
+				<input id="keep_spacing" type="checkbox" checked/>
+				<label for="keep_spacing">Preserve spacing</label>
 
 			</li>
 			<li>
@@ -102,9 +81,10 @@ var Sim = global_namespace.Import('startpad.enigma.sim');
 	</fieldset>
 </div>
 
-<script>Sim.Init();</script>
+
 
 
 </div> <!-- page -->
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>
