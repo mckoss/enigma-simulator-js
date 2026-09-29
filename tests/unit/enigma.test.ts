@@ -84,7 +84,38 @@ describe('Enigma', () => {
     expect(settings.rotors).toHaveLength(3);
     expect(settings.position).toHaveLength(3);
     expect(settings.rings).toHaveLength(3);
-    expect(settingsFromPasskey('test')).toEqual(settingsFromPasskey('test'));
+    expect(settingsFromPasskey('test')).toEqual({
+      rotors: ['I', 'V', 'IV'],
+      position: ['D', 'B', 'C'],
+      rings: ['S', 'Q', 'D'],
+      plugs: 'RY NB VT CH JQ LE OX PD ZI GK',
+    });
+  });
+
+  it('rejects invalid rotor and ring settings without changing the machine', () => {
+    const machine = new Enigma();
+    const initial = machine.stateStrings();
+    expect(() => machine.init(settingsFromStrings({ rotors: 'I-II-INVALID' }))).toThrow(/rotor/i);
+    expect(() => machine.init({ rotors: ['I', 'I', 'III'] })).toThrow(/rotor/i);
+    expect(() => machine.init({ reflector: 'D' })).toThrow(/reflector/i);
+    expect(() => machine.init({ position: ['A', 'B'] })).toThrow(/position/i);
+    expect(() => machine.init({ rings: ['A', 'A', '?'] })).toThrow(/ring/i);
+    expect(machine.stateStrings()).toEqual(initial);
+    expect(machine.encode('ENIGMA')).toBe(new Enigma().encode('ENIGMA'));
+  });
+
+  it('rejects invalid plugboard pairs that break reciprocal encoding', () => {
+    const machine = new Enigma();
+    for (const plugs of ['ABC', 'AB AC', 'AA']) {
+      expect(() => machine.init({ plugs })).toThrow(/plugboard/i);
+    }
+    expect(machine.stateStrings().plugs).toBe('');
+  });
+
+  it('preserves explicitly emptied settings for validation', () => {
+    expect(settingsFromStrings({ position: '', rings: '', rotors: '' })).toEqual({
+      position: [], rings: [], rotors: [''],
+    });
   });
 
   it('repeats rotor positions after the original cycle length', () => {

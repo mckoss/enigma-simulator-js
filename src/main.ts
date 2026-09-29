@@ -20,6 +20,7 @@ const fields = {
   cipher: element<HTMLElement>('cipher_out'),
   twitter: element<HTMLAnchorElement>('twitter'),
   passkey: element<HTMLInputElement>('passkey'),
+  error: element<HTMLElement>('settings-error'),
   rotorsDisplay: [1, 2, 3].map((index) => element<HTMLElement>(`rot_${index}`)),
 };
 
@@ -39,7 +40,13 @@ function updateDisplay(): void {
     rings: fields.rings.value,
     plugs: fields.plugs.value,
   };
-  machine.init(settingsFromStrings(state));
+  try {
+    machine.init(settingsFromStrings(state));
+  } catch (error) {
+    fields.error.textContent = error instanceof Error ? error.message : 'Invalid machine settings.';
+    return;
+  }
+  fields.error.textContent = '';
   let cipher = machine.encode(plain);
   let keyOutput = '';
   const repeatedKey = /^([A-Z]{3})\1/i;
