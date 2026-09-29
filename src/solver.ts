@@ -19,4 +19,4 @@ worker.addEventListener('error', (event) => {
   output.textContent = `Worker error: ${event.message}`;
   solve.disabled = false;
 });
-input.focus();
+input.focus({ preventScroll: true });

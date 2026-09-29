@@ -19,16 +19,29 @@ test('encodes the sample message and responds to settings', async ({ page }) => 
   await expect(page.locator('#cipher_out')).not.toHaveText(withPlug ?? '');
 });
 
-test('sets repeatable machine settings from a passkey', async ({ page }) => {
+test('sets repeatable machine settings from an inline passkey', async ({ page }) => {
   await page.goto('./');
-  page.once('dialog', (dialog) => dialog.accept('test passkey'));
-  await page.locator('#passkey').click();
+  await expect(page.locator('#passkey-input')).toHaveValue(/^\d{4}-\d{1,2}-\d{1,2}$/);
+  await page.locator('#passkey-input').fill('test passkey');
+  await page.locator('#passkey-input').press('Enter');
   const first = await page.locator('#rotors').inputValue();
   expect(first.split('-')).toHaveLength(3);
   await expect(page.locator('#position')).toHaveValue(/^[A-Z]{3}$/);
-  page.once('dialog', (dialog) => dialog.accept('test passkey'));
   await page.locator('#passkey').click();
   await expect(page.locator('#rotors')).toHaveValue(first);
+  await page.locator('#passkey-input').fill('');
+  await page.locator('#passkey').click();
+  await expect(page.locator('#settings-error')).toHaveText('Enter a passkey.');
+});
+
+test('copies the visible output including a message key', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('./');
+  await page.locator('#plain').fill('ABCABCHELLO');
+  const output = await page.locator('#cipher').textContent();
+  await page.locator('#copy-output').click();
+  await expect(page.locator('#copy-output')).toHaveText('Copied');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(output);
 });
 
 test('logs the machine path for each encoded letter', async ({ page }) => {
@@ -68,12 +81,18 @@ test('handles a repeated three-letter message key', async ({ page }) => {
   await expect(page.locator('#cipher_out')).toHaveText(/^[A-Z]{5}$/);
 });
 
-test('fits tablet and phone viewports without horizontal scrolling', async ({ page }) => {
+test('simulator and solver fit tablet and phone viewports and start at the top', async ({ page }) => {
   for (const width of [820, 375]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('./');
-    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-    expect(scrollWidth).toBeLessThanOrEqual(width);
+    for (const path of ['./', './enigma-solver.html']) {
+      await page.goto(path);
+      const dimensions = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        scrollY: window.scrollY,
+      }));
+      expect(dimensions.scrollWidth).toBeLessThanOrEqual(width);
+      expect(dimensions.scrollY).toBe(0);
+    }
   }
 });
 

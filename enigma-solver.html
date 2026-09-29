@@ -1,35 +1,96 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enigma Machine Simulator</title>
-<link rel="stylesheet" type="text/css" href="/enigma-sim.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f3f2f2" />
+  <title>Enigma Rotor Search · Mike Koss</title>
+  <link rel="stylesheet" href="/enigma-sim.css" />
 </head>
 <body>
-<div class="page">
+  <div class="site-shell">
+    <aside class="site-sidebar" aria-label="Site navigation">
+      <div class="brand-block">
+        <a class="brand" href="https://mckoss.com/">Mike<br />Koss</a>
+        <span class="brand-domain">mckoss.com</span>
+      </div>
+      <nav class="side-nav" aria-label="Project navigation">
+        <a href="./">Simulator</a>
+        <a href="./enigma-solver.html" aria-current="page">Rotor search</a>
+      </nav>
+      <div class="sidebar-more">
+        <p class="sidebar-label">mckoss.com</p>
+        <a href="https://mckoss.com/tags/crypto/">Crypto articles</a>
+        <a href="https://mckoss.com/pages/about/">About</a>
+        <a href="https://mckoss.com/pages/contact/">Contact</a>
+      </div>
+    </aside>
 
-<h1>Enigma Machine Solver</h1>
-<p style="color:gray;">by Mike Koss <small id="app-version"></small></p>
-<hr/>
+    <div class="site-main">
+      <div class="mobile-topbar">
+        <a class="mobile-brand" href="https://mckoss.com/">Mike Koss</a>
+      </div>
+      <nav class="mobile-app-nav" aria-label="Project navigation">
+        <a href="./">Simulator</a>
+        <a href="./enigma-solver.html" aria-current="page">Rotor search</a>
+      </nav>
 
-<fieldset id="input_form">
-	<legend>Rotor Search</legend>
-	<ol>
-		<li>
-			<label class="box" for="text_input">Enter Coded Message Here:</label>
-			<textarea class="text-input" id="text_input">QMJIDO MZWZJFJR</textarea>
-		</li>
-		<li>
-			<label for="solve"></label>
-			<input type="button" id="solve" value="Solve It"/>
-		</li>
-	</ol>
-</fieldset>
-<p id="solver-output" role="status" aria-live="polite"></p>
+      <header class="page-header">
+        <div class="page-header-main">
+          <p class="eyebrow">Unfinished experiment</p>
+          <h1>Enigma Rotor Search</h1>
+          <p class="lead">Enter a coded message and search for possible rotor positions.</p>
+        </div>
+        <div class="page-meta">
+          <span class="meta-label">Created by</span>
+          <strong>Mike Koss</strong>
+          <small id="app-version"></small>
+        </div>
+      </header>
 
-</div>
-
-<script type="module" src="/src/solver.ts"></script>
+      <main class="solver-content">
+        <section class="solver-panel" aria-labelledby="search-heading">
+          <div class="panel-heading">
+            <span class="step-label">01 / Search</span>
+            <h2 id="search-heading">Coded message</h2>
+          </div>
+          <p class="experiment-note">This unfinished search keeps the rotor order (I–II–III), reflector (B), rings (AAA), and plugboard (empty) fixed. It tries 16,900 starting positions and favors decoded text with lower single-letter entropy. A few dozen letters can give a false winner; try a paragraph of at least 100 letters for a more useful guess. Even then, treat the result as a clue, not a reliable decode.</p>
+          <fieldset id="input_form" class="solver-form">
+            <legend class="visually-hidden">Rotor search</legend>
+            <div class="field">
+              <label for="text_input">Enter coded message here</label>
+              <textarea class="text-input" id="text_input" spellcheck="false">QMJIDO MZWZJFJR</textarea>
+            </div>
+            <input class="button button-primary" type="button" id="solve" value="Search rotor positions" />
+          </fieldset>
+          <div class="solver-result">
+            <span class="status-label">Search result</span>
+            <p id="solver-output" role="status" aria-live="polite">Run the search to see possible settings.</p>
+          </div>
+        </section>
+        <aside class="solver-aside">
+          <div class="aside-block">
+            <span class="sidebar-label">The simulator</span>
+            <p>Choose settings yourself and see the machine encode each letter.</p>
+            <a class="button button-secondary" href="./">Open simulator ↗</a>
+          </div>
+          <div class="aside-block">
+            <span class="sidebar-label">Source</span>
+            <a href="https://github.com/mckoss/enigma-simulator-js">github.com/mckoss/enigma-simulator-js</a>
+          </div>
+        </aside>
+      </main>
+      <footer class="page-footer">
+        <span>All rights reserved by Mike Koss</span>
+        <nav aria-label="Site links">
+          <a href="https://mckoss.com/tags/crypto/">Crypto articles</a>
+          <a href="https://mckoss.com/pages/about/">About</a>
+          <a href="https://mckoss.com/pages/contact/">Contact</a>
+          <a href="https://github.com/mckoss/enigma-simulator-js">Source code</a>
+        </nav>
+      </footer>
+    </div>
+  </div>
+  <script type="module" src="/src/solver.ts"></script>
 </body>
 </html>

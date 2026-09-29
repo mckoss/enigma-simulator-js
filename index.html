@@ -1,83 +1,160 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enigma Machine Simulator</title>
-<link rel="stylesheet" type="text/css" href="/enigma-sim.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f3f2f2" />
+  <title>Enigma Machine Simulator · Mike Koss</title>
+  <link rel="stylesheet" href="/enigma-sim.css" />
 </head>
 <body>
-<div class="page">
+  <div class="site-shell">
+    <aside class="site-sidebar" aria-label="Site navigation">
+      <div class="brand-block">
+        <a class="brand" href="https://mckoss.com/">Mike<br />Koss</a>
+        <span class="brand-domain">mckoss.com</span>
+      </div>
+      <nav class="side-nav" aria-label="Project navigation">
+        <a href="./" aria-current="page">Simulator</a>
+        <a href="./enigma-solver.html">Rotor search</a>
+      </nav>
+      <div class="sidebar-more">
+        <p class="sidebar-label">mckoss.com</p>
+        <a href="https://mckoss.com/tags/crypto/">Crypto articles</a>
+        <a href="https://mckoss.com/pages/about/">About</a>
+        <a href="https://mckoss.com/pages/contact/">Contact</a>
+      </div>
+    </aside>
 
-<h1>Enigma Machine Simulator</h1>
-<p style="color:gray;">by Mike Koss <small id="app-version"></small></p>
-<hr/>
+    <div class="site-main">
+      <div class="mobile-topbar">
+        <a class="mobile-brand" href="https://mckoss.com/">Mike Koss</a>
+      </div>
+      <nav class="mobile-app-nav" aria-label="Project navigation">
+        <a href="./" aria-current="page">Simulator</a>
+        <a href="./enigma-solver.html">Rotor search</a>
+      </nav>
 
-<div class="left">
-	<fieldset id="init_form">
-		<legend>Initialization</legend>
-		<ol>
-			<li>
-				<label for="rotors">Rotors:</label>
-				<input type="text" id="rotors"/>
-			</li>
-			<li>
-				<label for="position">Rotor Start:</label>
-				<input type="text" id="position"/>
-			</li>
-			<li>
-				<label for="rings">Rings:</label>
-				<input type="text" id="rings"/>
-			</li>
-			<li>
-				<label for="plugs">Plugboard:</label>
-				<input type="text" id="plugs"/>
-			</li>
-			<li>
-				<label for="passkey"></label>
-				<input type="button" id="passkey" value="Set from passkey"/>
-			</li>
-		</ol>
-		<p id="settings-error" role="alert"></p>
-	</fieldset>
-	<p>
-	To learn more about the <a target="_blank" href="https://en.wikipedia.org/wiki/Enigma_machine">Enigma Machine</a>,
-	try using the <a target="_blank" href="https://mckoss.com/posts/paper-enigma/">Paper Engima</a>.  You
-	can also read the <a target="_blank" href="https://github.com/mckoss/enigma-simulator-js">source code</a>
-	used by this Enigma Simulator.
-	</p>
-	<a target="_blank" href="https://en.wikipedia.org/wiki/Enigma_machine"><img src="images/mycryptos.jpg"/></a>
-	<a target="_blank" href="https://mckoss.com/posts/paper-enigma/"><img src="images/EnigmaThumb.jpg"/></a>
-</div>
+      <header class="page-header">
+        <div class="page-header-main">
+          <p class="eyebrow">Interactive project</p>
+          <h1>Enigma Machine Simulator</h1>
+          <p class="lead">Set the rotors, type a message, and watch the machine transform each letter.</p>
+        </div>
+        <div class="page-meta">
+          <span class="meta-label">Created by</span>
+          <strong>Mike Koss</strong>
+          <small id="app-version"></small>
+        </div>
+      </header>
 
-<div class="right">
-	<fieldset id="encoding">
-		<legend>Encoding</legend>
-		<ol>
-			<li id="rotor_display">
-				<span id="rot_1"></span><span id="rot_2"></span><span id="rot_3"></span>
-			</li>
-			<li>
-				<label class="box" for="plain">Type Message Here:</label>
-				<textarea class="text-input" id="plain">QMJIDO MZWZJFJR</textarea>
-			</li>
-			<li>
-				<label class="box" for="cipher">Read Output Here:</label>
-				<div id="cipher"><span id="key_out"></span><span id="cipher_out"></span></div>
-			</li>
-			<li>
-				<input id="keep_spacing" type="checkbox" checked/>
-				<label for="keep_spacing">Preserve spacing</label>
+      <main class="workspace" aria-label="Enigma machine controls">
+        <section class="workspace-panel" aria-labelledby="setup-heading">
+          <div class="panel-heading">
+            <span class="step-label">01 / Configure</span>
+            <h2 id="setup-heading">Machine setup</h2>
+          </div>
+          <p class="panel-intro">Choose three rotors and their starting settings. The same setup decodes what it encodes.</p>
+          <fieldset id="init_form" class="settings-form">
+            <legend class="visually-hidden">Machine settings</legend>
+            <div class="field-grid">
+              <div class="field">
+                <label for="rotors">Rotors</label>
+                <input type="text" id="rotors" autocomplete="off" spellcheck="false" aria-describedby="rotors-help" />
+                <span class="field-help" id="rotors-help">Three of I–V, left to right</span>
+              </div>
+              <div class="field">
+                <label for="position">Rotor start</label>
+                <input type="text" id="position" autocomplete="off" spellcheck="false" aria-describedby="position-help" />
+                <span class="field-help" id="position-help">Three letters</span>
+              </div>
+              <div class="field">
+                <label for="rings">Rings</label>
+                <input type="text" id="rings" autocomplete="off" spellcheck="false" aria-describedby="rings-help" />
+                <span class="field-help" id="rings-help">Three letters</span>
+              </div>
+              <div class="field">
+                <label for="plugs">Plugboard</label>
+                <input type="text" id="plugs" autocomplete="off" spellcheck="false" aria-describedby="plugs-help" />
+                <span class="field-help" id="plugs-help">Pairs, such as AB CD</span>
+              </div>
+            </div>
+            <div class="passkey-control">
+              <label for="passkey-input">Passkey</label>
+              <p id="passkey-help">Use a date, word, or phrase to recreate the same setup.</p>
+              <div class="passkey-row">
+                <input type="text" id="passkey-input" autocomplete="off" spellcheck="false" aria-describedby="passkey-help" />
+                <input class="button button-primary" type="button" id="passkey" value="Set from passkey" />
+              </div>
+            </div>
+            <p id="settings-error" role="alert"></p>
+          </fieldset>
+        </section>
 
-			</li>
-		</ol>
-	</fieldset>
-</div>
+        <section class="workspace-panel" id="encoding" aria-labelledby="encode-heading">
+          <div class="panel-heading">
+            <span class="step-label">02 / Encode</span>
+            <h2 id="encode-heading">Your message</h2>
+          </div>
+          <div class="rotor-status">
+            <span class="status-label">Live rotor position</span>
+            <div id="rotor_display" aria-label="Current rotor positions">
+              <span id="rot_1"></span><span id="rot_2"></span><span id="rot_3"></span>
+            </div>
+          </div>
+          <div class="field message-field">
+            <label for="plain">Type message here</label>
+            <textarea class="text-input" id="plain" spellcheck="false">QMJIDO MZWZJFJR</textarea>
+          </div>
+          <div class="output-heading">
+            <span id="output-label">Read output here</span>
+            <label class="spacing-toggle" for="keep_spacing">
+              <input id="keep_spacing" type="checkbox" checked />
+              Preserve spacing
+            </label>
+          </div>
+          <div class="output-window">
+            <div class="output-toolbar"><button type="button" id="copy-output" aria-live="polite">Copy text</button></div>
+            <div id="cipher" aria-labelledby="output-label" aria-live="polite"><span id="key_out"></span><span id="cipher_out"></span></div>
+          </div>
+          <p class="trace-note">Open the browser console to trace each letter’s path through the machine.</p>
+        </section>
+      </main>
 
-
-
-
-</div> <!-- page -->
-<script type="module" src="/src/main.ts"></script>
+      <section class="explore" aria-labelledby="explore-heading">
+        <div class="explore-heading">
+          <span class="eyebrow">Continue exploring</span>
+          <h2 id="explore-heading">Inside the Enigma</h2>
+        </div>
+        <div class="explore-grid">
+          <a href="./enigma-solver.html">
+            <span class="link-kicker">Try it ↗</span>
+            <strong>Rotor search</strong>
+            <span>Search rotor positions for an encoded message.</span>
+          </a>
+          <a href="https://mckoss.com/posts/paper-enigma/">
+            <span class="link-kicker">Read more ↗</span>
+            <strong>The Paper Enigma</strong>
+            <span>Explore a paper simulator compatible with the machine.</span>
+          </a>
+          <a href="https://mckoss.com/tags/crypto/">
+            <span class="link-kicker">More from Mike ↗</span>
+            <strong>Crypto articles</strong>
+            <span>Browse more writing about cryptography and codes.</span>
+          </a>
+        </div>
+      </section>
+      <footer class="page-footer">
+        <span>All rights reserved by Mike Koss</span>
+        <nav aria-label="Site links">
+          <a href="https://mckoss.com/tags/crypto/">Crypto articles</a>
+          <a href="https://mckoss.com/pages/about/">About</a>
+          <a href="https://mckoss.com/pages/contact/">Contact</a>
+          <a href="https://github.com/mckoss/enigma-simulator-js">Source code</a>
+        </nav>
+      </footer>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
