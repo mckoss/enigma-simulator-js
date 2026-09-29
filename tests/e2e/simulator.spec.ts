@@ -31,6 +31,21 @@ test('sets repeatable machine settings from a passkey', async ({ page }) => {
   await expect(page.locator('#rotors')).toHaveValue(first);
 });
 
+test('logs the machine path for each encoded letter', async ({ page }) => {
+  const logs: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'log') logs.push(message.text());
+  });
+  await page.goto('./');
+  logs.length = 0;
+  await page.locator('#plain').fill('AB');
+
+  const paths = logs.filter((message) => message.includes('->'));
+  expect(paths).toHaveLength(2);
+  expect(paths[0]).toMatch(/^A(?:->[A-Z]){9} Enigma Rotors: I-II-III Position: /);
+  expect(paths[1]).toMatch(/^B(?:->[A-Z]){9} Enigma Rotors: I-II-III Position: /);
+});
+
 test('solver starts a module worker and returns a result', async ({ page }) => {
   await page.goto('./enigma-solver.html');
   await page.locator('#text_input').fill('QMJIDO MZWZJFJR');

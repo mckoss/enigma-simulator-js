@@ -8,6 +8,7 @@ function element<T extends HTMLElement>(id: string): T {
 }
 
 const machine = new Enigma();
+machine.trace = (message) => console.log(message);
 const fields = {
   rotors: element<HTMLInputElement>('rotors'),
   position: element<HTMLInputElement>('position'),
