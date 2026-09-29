@@ -148,10 +148,12 @@ padding: 5px;
 color: red;
 }
 /* Keep the original two-column layout usable on narrow screens. */
-@media (max-width: 760px) {
+@media (max-width: 1000px) {
   div.page { width: calc(100% - 24px); }
   div.left, div.right { float: none; width: 100%; }
   .text-input { box-sizing: border-box; }
   #rotor_display span { display: inline-block; margin: 4px; padding: 8px; }
   #init_form input[type="text"], #init_form input[type="button"] { max-width: 100%; box-sizing: border-box; }
 }
+
+#settings-error { color: #a00000; font-size: 16px; }

@@ -46,6 +46,37 @@ test('logs the machine path for each encoded letter', async ({ page }) => {
   expect(paths[1]).toMatch(/^B(?:->[A-Z]){9} Enigma Rotors: I-II-III Position: /);
 });
 
+test('reports incomplete settings and recovers after correction', async ({ page }) => {
+  await page.goto('./');
+  const original = await page.locator('#cipher_out').textContent();
+  await page.locator('#rotors').fill('I-II-');
+  await expect(page.locator('#settings-error')).toContainText(/rotor/i);
+  await expect(page.locator('#cipher_out')).toHaveText(original ?? '');
+  await page.locator('#rotors').fill('I-II-III');
+  await expect(page.locator('#settings-error')).toBeEmpty();
+
+  await page.locator('#plugs').fill('AB AC');
+  await expect(page.locator('#settings-error')).toContainText(/plugboard/i);
+  await page.locator('#plugs').fill('AB CD');
+  await expect(page.locator('#settings-error')).toBeEmpty();
+});
+
+test('handles a repeated three-letter message key', async ({ page }) => {
+  await page.goto('./');
+  await page.locator('#plain').fill('ABCABCHELLO');
+  await expect(page.locator('#key_out')).toHaveText(/^[A-Z]{6} $/);
+  await expect(page.locator('#cipher_out')).toHaveText(/^[A-Z]{5}$/);
+});
+
+test('fits tablet and phone viewports without horizontal scrolling', async ({ page }) => {
+  for (const width of [820, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('./');
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(scrollWidth).toBeLessThanOrEqual(width);
+  }
+});
+
 test('solver starts a module worker and returns a result', async ({ page }) => {
   await page.goto('./enigma-solver.html');
   await page.locator('#text_input').fill('QMJIDO MZWZJFJR');

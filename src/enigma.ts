@@ -2,12 +2,16 @@ import { random } from './random';
 
 export type RotorName = 'I' | 'II' | 'III' | 'IV' | 'V';
 export type ReflectorName = 'B' | 'C';
-export interface Settings {
-  rotors: RotorName[];
-  reflector: ReflectorName;
+export interface SettingsInput {
+  rotors: string[];
+  reflector: string;
   position: string[];
   rings: string[];
   plugs: string;
+}
+export interface Settings extends SettingsInput {
+  rotors: RotorName[];
+  reflector: ReflectorName;
 }
 export interface SettingsStrings {
   rotors: string;
@@ -18,9 +22,11 @@ export interface SettingsStrings {
 }
 interface Rotor {
   wires: string;
-  notch?: string;
   map: number[];
   reverse: number[];
+}
+interface Wheel extends Rotor {
+  notch: string;
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -34,7 +40,7 @@ export function charFromIndex(index: number): string {
   return String.fromCharCode(index + CODE_A);
 }
 
-function rotor(wires: string, notch?: string): Rotor {
+function rotor(wires: string): Rotor {
   const map: number[] = [];
   const reverse: number[] = [];
   for (let from = 0; from < 26; from++) {
@@ -42,27 +48,39 @@ function rotor(wires: string, notch?: string): Rotor {
     map[from] = (26 + to - from) % 26;
     reverse[to] = (26 + from - to) % 26;
   }
-  return { wires, notch, map, reverse };
+  return { wires, map, reverse };
 }
 
-const ROTORS: Record<RotorName, Rotor> = {
-  I: rotor('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),
-  II: rotor('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),
-  III: rotor('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),
-  IV: rotor('ESOVPZJAYQUIRHXLNFTGKDCMWB', 'J'),
-  V: rotor('VZBRGITYUPSDNHLXAWMJQOFECK', 'Z'),
+function wheel(wires: string, notch: string): Wheel {
+  return { ...rotor(wires), notch };
+}
+
+const ROTORS: Record<RotorName, Wheel> = {
+  I: wheel('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),
+  II: wheel('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),
+  III: wheel('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),
+  IV: wheel('ESOVPZJAYQUIRHXLNFTGKDCMWB', 'J'),
+  V: wheel('VZBRGITYUPSDNHLXAWMJQOFECK', 'Z'),
 };
 const REFLECTORS: Record<ReflectorName, Rotor> = {
   B: rotor('YRUHQSLDPXNGOKMIEBFZCWVJAT'),
   C: rotor('FVPJIAOYEDRZXWGCTKUQSBNMHL'),
 };
 
-export function settingsFromStrings(state: Partial<SettingsStrings>): Partial<Settings> {
+function isRotorName(name: string): name is RotorName {
+  return Object.hasOwn(ROTORS, name);
+}
+
+function isReflectorName(name: string): name is ReflectorName {
+  return Object.hasOwn(REFLECTORS, name);
+}
+
+export function settingsFromStrings(state: Partial<SettingsStrings>): Partial<SettingsInput> {
   return {
-    ...(state.rotors && { rotors: state.rotors.split('-') as RotorName[] }),
-    ...(state.reflector && { reflector: state.reflector as ReflectorName }),
-    ...(state.position && { position: state.position.split('') }),
-    ...(state.rings && { rings: state.rings.split('') }),
+    ...(state.rotors !== undefined && { rotors: state.rotors.split('-') }),
+    ...(state.reflector !== undefined && { reflector: state.reflector }),
+    ...(state.position !== undefined && { position: state.position.split('') }),
+    ...(state.rings !== undefined && { rings: state.rings.split('') }),
     ...(state.plugs !== undefined && { plugs: state.plugs }),
   };
 }
@@ -103,31 +121,53 @@ export class Enigma {
     rings: ['A', 'A', 'A'],
     plugs: '',
   };
-  rotors: Rotor[] = [];
+  rotors: Wheel[] = [];
   reflector: Rotor = REFLECTORS.B;
   position: number[] = [];
   rings: number[] = [];
   plugs: number[] = [];
   trace?: (message: string) => void;
 
-  constructor(settings: Partial<Settings> = {}) {
+  constructor(settings: Partial<SettingsInput> = {}) {
     this.init(settings);
   }
 
-  init(settings: Partial<Settings> = {}): this {
-    this.settings = { ...this.settings, ...settings };
-    this.rotors = this.settings.rotors.map((name) => ROTORS[name]);
-    this.reflector = REFLECTORS[this.settings.reflector];
-    this.position = this.settings.position.map(indexFromChar);
-    this.rings = this.settings.rings.map(indexFromChar);
-    this.settings.plugs = this.settings.plugs.toUpperCase().replace(/[^A-Z]/g, '');
-    this.plugs = Array.from({ length: 26 }, (_, index) => index);
-    for (let i = 0; i + 1 < this.settings.plugs.length; i += 2) {
-      const from = indexFromChar(this.settings.plugs[i]);
-      const to = indexFromChar(this.settings.plugs[i + 1]);
-      this.plugs[from] = to;
-      this.plugs[to] = from;
+  init(settings: Partial<SettingsInput> = {}): this {
+    const candidate: SettingsInput = { ...this.settings, ...settings };
+    const rotors = candidate.rotors.map((name) => name.trim().toUpperCase());
+    if (rotors.length !== 3 || new Set(rotors).size !== 3 || !rotors.every(isRotorName)) {
+      throw new Error('Rotors must be three different names from I through V.');
     }
+    const reflector = candidate.reflector.toUpperCase();
+    if (!isReflectorName(reflector)) {
+      throw new Error('Reflector must be B or C.');
+    }
+    const position = candidate.position.map((letter) => letter.toUpperCase());
+    if (position.length !== 3 || position.some((letter) => !/^[A-Z]$/.test(letter))) {
+      throw new Error('Position must be three letters from A through Z.');
+    }
+    const rings = candidate.rings.map((letter) => letter.toUpperCase());
+    if (rings.length !== 3 || rings.some((letter) => !/^[A-Z]$/.test(letter))) {
+      throw new Error('Rings must be three letters from A through Z.');
+    }
+    const plugLetters = candidate.plugs.toUpperCase().replace(/[^A-Z]/g, '');
+    if (plugLetters.length % 2 !== 0 || new Set(plugLetters).size !== plugLetters.length) {
+      throw new Error('Plugboard must contain pairs of different, unused letters.');
+    }
+
+    const plugs = Array.from({ length: 26 }, (_, index) => index);
+    for (let i = 0; i < plugLetters.length; i += 2) {
+      const from = indexFromChar(plugLetters[i]);
+      const to = indexFromChar(plugLetters[i + 1]);
+      plugs[from] = to;
+      plugs[to] = from;
+    }
+    this.settings = { ...candidate, rotors, reflector, position, rings, plugs: plugLetters };
+    this.rotors = rotors.map((name) => ROTORS[name]);
+    this.reflector = REFLECTORS[reflector];
+    this.position = position.map(indexFromChar);
+    this.rings = rings.map(indexFromChar);
+    this.plugs = plugs;
     this.trace?.(`Init: ${this.toString()}`);
     return this;
   }
@@ -158,10 +198,10 @@ export class Enigma {
   }
 
   incrementRotors(): void {
-    if (this.position[1] === indexFromChar(this.rotors[1].notch!)) {
+    if (this.position[1] === indexFromChar(this.rotors[1].notch)) {
       this.position[0]++;
       this.position[1]++;
-    } else if (this.position[2] === indexFromChar(this.rotors[2].notch!)) {
+    } else if (this.position[2] === indexFromChar(this.rotors[2].notch)) {
       this.position[1]++;
     }
     this.position[2]++;
