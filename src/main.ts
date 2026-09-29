@@ -18,7 +18,9 @@ const fields = {
   plain: element<HTMLTextAreaElement>('plain'),
   key: element<HTMLElement>('key_out'),
   cipher: element<HTMLElement>('cipher_out'),
+  copy: element<HTMLButtonElement>('copy-output'),
   passkey: element<HTMLInputElement>('passkey'),
+  passkeyInput: element<HTMLInputElement>('passkey-input'),
   error: element<HTMLElement>('settings-error'),
   rotorsDisplay: [1, 2, 3].map((index) => element<HTMLElement>(`rot_${index}`)),
 };
@@ -28,6 +30,8 @@ fields.rotors.value = initial.rotors;
 fields.position.value = initial.position;
 fields.rings.value = initial.rings;
 fields.plugs.value = initial.plugs;
+const today = new Date();
+fields.passkeyInput.value = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 element<HTMLElement>('app-version').textContent = `v${version}`;
 
 function updateDisplay(): void {
@@ -59,6 +63,7 @@ function updateDisplay(): void {
   if (!fields.keepSpacing.checked) cipher = groupLetters(cipher);
   fields.key.textContent = keyOutput;
   fields.cipher.textContent = cipher;
+  fields.copy.textContent = 'Copy text';
   fields.rotorsDisplay.forEach((display, index) => {
     display.textContent = charFromIndex(machine.position[index]);
   });
@@ -68,11 +73,22 @@ for (const field of [fields.rotors, fields.position, fields.rings, fields.plugs,
   field.addEventListener('input', updateDisplay);
 }
 fields.keepSpacing.addEventListener('change', updateDisplay);
+fields.copy.addEventListener('click', async () => {
+  const output = `${fields.key.textContent ?? ''}${fields.cipher.textContent ?? ''}`;
+  try {
+    await navigator.clipboard.writeText(output);
+    fields.copy.textContent = 'Copied';
+  } catch {
+    fields.copy.textContent = 'Copy failed';
+  }
+});
 fields.passkey.addEventListener('click', () => {
-  const today = new Date();
-  const defaultKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-  const passkey = prompt('Enter passkey to set initial Enigma settings.', defaultKey);
-  if (!passkey) return;
+  const passkey = fields.passkeyInput.value.trim();
+  if (!passkey) {
+    fields.error.textContent = 'Enter a passkey.';
+    fields.passkeyInput.focus();
+    return;
+  }
   const settings = stringsFromSettings(settingsFromPasskey(passkey));
   fields.rotors.value = settings.rotors ?? '';
   fields.position.value = settings.position ?? '';
@@ -80,6 +96,15 @@ fields.passkey.addEventListener('click', () => {
   fields.plugs.value = settings.plugs ?? '';
   updateDisplay();
 });
+fields.passkeyInput.addEventListener('input', () => {
+  if (fields.error.textContent === 'Enter a passkey.') fields.error.textContent = '';
+});
+fields.passkeyInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    fields.passkey.click();
+  }
+});
 
 updateDisplay();
-fields.plain.focus();
+fields.plain.focus({ preventScroll: true });

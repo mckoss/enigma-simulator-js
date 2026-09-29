@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Entropy } from '../../src/entropy';
+import { Entropy, expectedRandomEntropy } from '../../src/entropy';
 import { Enigma } from '../../src/enigma';
 
 describe('Entropy', () => {
@@ -12,6 +12,16 @@ describe('Entropy', () => {
       expect(entropy.init().addString(text).bitsPerChar()).toBe(expected);
     }
     expect(new Entropy('aA', Entropy.alphaOnly).bitsPerChar()).toBe(0);
+  });
+
+  it('compares with expected entropy for random text of the same length', () => {
+    expect(expectedRandomEntropy(0)).toBe(0);
+    expect(expectedRandomEntropy(1)).toBe(0);
+    expect(expectedRandomEntropy(2)).toBeCloseTo(25 / 26);
+    expect(expectedRandomEntropy(100)).toBeGreaterThan(expectedRandomEntropy(2));
+    expect(expectedRandomEntropy(100)).toBeLessThan(Math.log2(26));
+    expect(expectedRandomEntropy(2000)).toBeGreaterThan(4.68);
+    expect(expectedRandomEntropy(2000)).toBeLessThan(Math.log2(26));
   });
 
   it('finds encrypted text more entropic at successive positions', () => {
